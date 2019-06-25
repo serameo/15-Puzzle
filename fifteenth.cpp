@@ -120,7 +120,7 @@ void DigitTile::Draw(HDC hdc)
     TCHAR text[4];
     if (m_value != 0)
     {
-        wsprintf(text, TEXT(" % d"), m_value);
+        wsprintf(text, TEXT("%d"), m_value);
         DrawText(hdc, text, lstrlen(text), &m_rect, DT_SINGLELINE | DT_CENTER | DT_VCENTER);
     }
     else
@@ -188,8 +188,6 @@ protected:
         wc.cbWndExtra = 0;
         return (BOOL) RegisterClass(&wc);
     }
-
-    //virtual void OnLButtonDown(int x, int y, UINT flags);
 
 public:
     int HitTest(int x, int y); // return cell
@@ -468,9 +466,6 @@ int GameView::HitTest(int x, int y)
     RECT rc;
     GetClientRect(&rc);
 
-    //int width = rc.right - rc.left;
-    //int height = rc.bottom - rc.top;
-
     int cx = 60;
     int cy = 60;
 
@@ -566,7 +561,7 @@ void ExpectedLayer::Draw(HDC hdc)
         else
         {
             Rectangle(hdc, rc.left, rc.top, rc.right, rc.bottom);
-            wsprintf(sz, TEXT(" % d"), m_aExpectedNumbers[i]);
+            wsprintf(sz, TEXT("%d"), m_aExpectedNumbers[i]);
             DrawText(hdc, sz, lstrlen(sz), &rc, DT_VCENTER | DT_CENTER | DT_SINGLELINE);
         }
     }
@@ -597,7 +592,6 @@ bool ExpectedLayer::AreMatchedAllNumbers(const int *pTestedNumbers)
 class CtlLayer : public TGameLayer
 {
 public:
-    //NewGameButton *m_pNewButton;
     TGameLabel *m_pClicks;
     TTimerLabel *m_pTimeCount;
 
@@ -608,8 +602,8 @@ public:
         m_rect = *prc;
 
         RECT rect;
-        rect.left = 270; //m_rect.left;
-        rect.top = 30; //m_rect.top;
+        rect.left = 270;
+        rect.top = 30;
         rect.right = rect.left + 100;
         rect.bottom = rect.top + 30;
         AddNode(new NewGameButton(TEXT("New Game"), &rect));
@@ -802,7 +796,7 @@ void MovingTileGame::EndScene()
     MyController *pCtl = (MyController*) pScene->GetController();
 
     TCHAR sz[8];
-    wsprintf(sz, TEXT(" % d"), pCtl->GetClicks());
+    wsprintf(sz, TEXT("%d"), pCtl->GetClicks());
     pScene->m_pCtlLayer->m_pClicks->SetText(sz);
 
     BOOL bEnd = EndGame();
@@ -906,10 +900,10 @@ protected:
 
     virtual void OnGetMinMaxInfo(LPMINMAXINFO lpmm)
     {
-        lpmm->ptMaxTrackSize.x = 400;
-        lpmm->ptMaxTrackSize.y = 400;
-        lpmm->ptMinTrackSize.x = 400;
-        lpmm->ptMinTrackSize.y = 400;
+        lpmm->ptMaxTrackSize.x = 480;
+        lpmm->ptMaxTrackSize.y = 480;
+        lpmm->ptMinTrackSize.x = 480;
+        lpmm->ptMinTrackSize.y = 480;
     }
 };
 
@@ -942,19 +936,19 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, int nCmdShow)
     MainWnd wnd;
     wnd.CreateEx(0, //WS_EX_CLIENTEDGE,
             GAME_NAME, WS_OVERLAPPEDWINDOW,
-            0, 0, 400, 400,
+            0, 0, 480, 480,
             NULL, NULL, hInst);
 
     // create the scene view
     TGameView *pView = new GameView();
-    pView->Create(NULL, WS_CHILD, 0, 0, 400, 400, wnd.GetHWND(), (HMENU) IDC_GAMEVIEW, hInst);
+    pView->Create(NULL, WS_CHILD, 0, 0, 480, 480, wnd.GetHWND(), (HMENU) IDC_GAMEVIEW, hInst);
     // create the scene controller
     TGameController *pCtl = new MyController(pView);
     pView->SetController(pCtl); // controller and view know together
     // create the main scene
     TGameScene *pScene = new MyScene();
     pScene->SetController(pCtl);
-    ((MyScene*) pScene)->Init(400, 400);
+    ((MyScene*) pScene)->Init(480, 480);
 
     pCtl->SetScene(pScene);
     ((MyController*) pCtl)->SetMap(g_mapNumbers[g_currentMap]);
